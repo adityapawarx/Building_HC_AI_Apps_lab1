@@ -1,6 +1,5 @@
 import streamlit as st
-from openai import OpenAI
-from openai.error import AuthenticationError
+import openai
 
 # Show title and description.
 st.title("📄 Document question answering")
@@ -10,22 +9,18 @@ st.write(
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-
-
 openai_api_key = st.text_input("OpenAI API Key", type="password")
 
-
-if not openai_api_key:
+# Validate the API key immediately after it's entered.
+if openai_api_key:
     try:
+        # Use a simple API call to validate the key.
         openai.api_key = openai_api_key
-        openai.Model.list()
-        st.success("API kei is valid!, icon="✅")
-    except AuthenticationError:
-        st.error("Invalid  API key. Please enter a valid key.", icon = "❌")
+        openai.Model.list()  # Simple call to check if the API key is valid.
+        st.success("API key is valid!", icon="✅")
+    except Exception as e:  # General exception handling
+        st.error(f"Invalid API key or an error occurred: {str(e)}", icon="❌")
 
-    
 # Only continue if the API key is valid.
 if openai_api_key:
     # Let the user upload a file via `st.file_uploader`.
