@@ -14,9 +14,14 @@ openai_api_key = st.text_input("OpenAI API Key", type="password")
 # Validate the API key immediately after it's entered.
 if openai_api_key:
     try:
-        # Use a simple API call to validate the key.
+        # Set the API key.
         openai.api_key = openai_api_key
-        openai.Model.list()  # Simple call to check if the API key is valid.
+
+        # Validate the key by making a simple API call.
+        openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # You can use gpt-4o-mini or any other supported model
+            messages=[{"role": "system", "content": "ping"}]
+        )
         st.success("API key is valid!", icon="✅")
     except Exception as e:  # General exception handling
         st.error(f"Invalid API key or an error occurred: {str(e)}", icon="❌")
@@ -48,7 +53,7 @@ if openai_api_key:
 
         # Generate an answer using the OpenAI API.
         stream = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use the model you need.
+            model="gpt-4o-mini",  # Use the model you need.
             messages=messages,
             stream=True,
         )
