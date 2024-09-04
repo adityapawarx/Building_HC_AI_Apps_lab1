@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-from docx import Document
+import docx2txt
 
 # Show title and description.
 st.title("📄 Document question answering")
@@ -44,9 +44,8 @@ if openai_api_key:
     if uploaded_file and question:
         # Process the uploaded file and question.
         if uploaded_file.name.endswith('.docx'):
-            # Read the content from the uploaded .docx file
-            doc = Document(uploaded_file)
-            document = "\n".join([para.text for para in doc.paragraphs])
+            # Read the content from the uploaded .docx file using docx2txt
+            document = docx2txt.process(uploaded_file)
         else:
             # For .txt and .md files
             document = uploaded_file.read().decode()
