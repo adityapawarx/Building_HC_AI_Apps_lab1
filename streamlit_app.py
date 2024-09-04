@@ -1,5 +1,6 @@
 import streamlit as st
 from openai import OpenAI
+from openai.error import AuthenticationError
 
 # Show title and description.
 st.title("📄 Document question answering")
@@ -11,14 +12,22 @@ st.write(
 # Ask user for their OpenAI API key via `st.text_input`.
 # Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
 # via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
+
+
 openai_api_key = st.text_input("OpenAI API Key", type="password")
+
+
 if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+    try:
+        openai.api_key = openai_api_key
+        openai.Model.list()
+        st.success("API kei is valid!, icon="✅")
+    except AuthenticationError:
+        st.error("Invalid  API key. Please enter a valid key.", icon = "❌")
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
-
+    
+# Only continue if the API key is valid.
+if openai_api_key:
     # Let the user upload a file via `st.file_uploader`.
     uploaded_file = st.file_uploader(
         "Upload a document (.txt or .md)", type=("txt", "md")
@@ -43,8 +52,8 @@ else:
         ]
 
         # Generate an answer using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+        stream = openai.ChatCompletion.create(
+            model="gpt-4o-mini",  # Use the model you need.
             messages=messages,
             stream=True,
         )
