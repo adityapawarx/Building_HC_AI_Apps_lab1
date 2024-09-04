@@ -48,7 +48,7 @@ if openai_api_key:
 
         # Generate an answer using the OpenAI API.
         stream = openai.ChatCompletion.create(
-            model="gpt-4o-mini",  # Use the model you need.
+            model="gpt-3.5-turbo",  # Use the model you need.
             messages=messages,
             stream=True,
         )
